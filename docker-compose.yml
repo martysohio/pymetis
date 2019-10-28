@@ -1,0 +1,66 @@
+ 
+version: '3'
+
+networks:
+  metis:
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - metis
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "3"
+  # Define an InfluxDB service
+  influxdb:
+    image: influxdb:latest
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+    ports:
+      - "8086:8086"
+    networks:
+      - metis
+  # Define a Chronograf service
+  chronograf:
+    image: chronograf:latest
+    environment:
+      INFLUXDB_URL: http://influxdb:8086
+      KAPACITOR_URL: http://kapacitor:9092
+    ports:
+      - "8888:8888"
+    links:
+      - influxdb
+    networks:
+      - metis
+  # Define a service for using the influx CLI tool.
+  # docker-compose run influxdb-cli
+  influxdb-cli:
+    image: influxdb:latest
+    entrypoint:
+      - influx
+      - -host
+      - influxdb
+    links:
+      - influxdb
+    networks:
+      - metis
+  # Define a service for using the kapacitor CLI tool.
+  # docker-compose run kapacitor-cli
+  grafana:
+      image: grafana/grafana:6.2.0-beta2 
+      ports:
+        - 3000:3000
+      networks:
+        - monitoring
+      volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/plugins/:/var/lib/grafana/plugins/
+      env_file:
+      - ./grafana/config.monitoring
+      restart: always
