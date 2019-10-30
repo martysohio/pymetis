@@ -7,8 +7,10 @@ from count import check_url
 
 q = Queue(connection=Redis())
 
+f = open("urls.list","r")
 
-for i in range(0,100):
+urls = f.read().split()
+for url in urls:
     result = q.enqueue(
-                check_url, 'https://cded1u2ypquuejdj.mojostratus.io/magento/')
+                check_url, "https://" + url)
 

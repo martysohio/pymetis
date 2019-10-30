@@ -1,0 +1,10 @@
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    database: http_monitor
+    user: 
+    password: 
+    url: http://influxdb:8086
+    jsonData:
+      httpMode: GET
