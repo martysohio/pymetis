@@ -1,0 +1,5 @@
+metisenv/
+data/
+.vscode/
+__pycache__/
+urls.list
