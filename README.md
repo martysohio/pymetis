@@ -4,12 +4,11 @@ Python web site monitor using InfluxDB + Grafana dashboards
 
 ## How to use
 
-Create list of URLs to hit in urls.list
+- Run docker-compose build to create the Python image
+- Edit list in scripts/url.list for what sites you want to monitor
+- docker-compose up -d
+- A cron should start in the Python container to run hits against the sites.
 
-## The point
+Status codes are logged with a timeout of 30 seconds.  Unreachable/immediate errors have a status code of 0
 
-Sometimes you want to monitor a lot of URLs, it can be as hard or as easy as you want it to be. A lot of similar things already exist, I just wanted to see if I could do it this way.
-
-## Flaws
-
-Using multiple RQ workers scales much as your available hardware on a single box. Doesn't scale horizontally well so far.
+Open Grafana to see a simple premade dashboard.

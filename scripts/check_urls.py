@@ -8,7 +8,7 @@ from influxdb import InfluxDBClient
 
 
 INFLUX_CLIENT = InfluxDBClient(
-    '127.0.0.1', '8086', 'admin', 'admin', 'http_monitor')
+    'influxdb', '8086', 'admin', 'admin', 'http_monitor')
 STORE_FILE = "urls.list"
 
 
@@ -50,7 +50,7 @@ def store_list(store_file):
 async def fetch(url, session):
     try:
         start = time.time()
-        async with session.get(url, timeout=5) as response:
+        async with session.get(url, timeout=30) as response:
             await response.read()
             end = time.time()
             return Domain_Check(response.url,
@@ -59,6 +59,10 @@ async def fetch(url, session):
                                 )
     except Exception as e:
         print(e)
+        return Domain_Check(url,
+                            0,
+                            0.0
+                            )
 
 
 async def bound_fetch(sem, url, session):
