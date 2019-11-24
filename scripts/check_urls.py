@@ -1,7 +1,41 @@
 # modified fetch function with semaphore
-import random
+
 import asyncio
+import time
 from aiohttp import ClientSession
+from dataclasses import dataclass
+from influxdb import InfluxDBClient
+
+
+INFLUX_CLIENT = InfluxDBClient(
+    '127.0.0.1', '8086', 'admin', 'admin', 'http_monitor')
+STORE_FILE = "urls.list"
+
+
+@dataclass
+class Domain_Check:
+    domain: str
+    status: int
+    response_time: float
+
+
+def send_to_influx(data):
+    # fields can be updated with new measurements as desired
+    json_body = [
+        {
+            "measurement": "http_response",
+            "tags": {
+                "domain": data.domain,
+                "status": data.status
+            },
+            #           "time": data["time"] + "000000000",
+            "fields": {
+                "response_time": data.response_time,
+            }
+        }
+    ]
+    output = INFLUX_CLIENT.write_points(json_body)
+    return output
 
 
 def store_list(store_file):
@@ -15,10 +49,14 @@ def store_list(store_file):
 
 async def fetch(url, session):
     try:
+        start = time.time()
         async with session.get(url, timeout=5) as response:
-            print(response.status)
             await response.read()
-            return response.status
+            end = time.time()
+            return Domain_Check(response.url,
+                                response.status,
+                                end - start
+                                )
     except Exception as e:
         print(e)
 
@@ -30,7 +68,7 @@ async def bound_fetch(sem, url, session):
 
 
 async def run(r):
-    store_file = "urls.list"
+    store_file = STORE_FILE
     stores = store_list(store_file)
 
     tasks = []
@@ -40,7 +78,7 @@ async def run(r):
     # Create client session that will ensure we dont open new connection
     # per each request.
     async with ClientSession() as session:
-        for url in stores[:500]:
+        for url in stores:
             # pass Semaphore and session to every GET request
             task = asyncio.ensure_future(bound_fetch(sem, url, session))
             tasks.append(task)
@@ -52,8 +90,15 @@ async def run(r):
 
 if __name__ == '__main__':
 
+    """
+    hits URLs in batches of 10,000, if you have that many.
+    Allows the script to scale for larger use.
+
+    """
     number = 10000
     loop = asyncio.get_event_loop()
 
     future = asyncio.ensure_future(run(number))
     result = loop.run_until_complete(future)
+    for data in result:
+        send_to_influx(data)
