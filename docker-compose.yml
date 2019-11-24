@@ -1,22 +1,9 @@
- 
+
 version: '3'
 
 networks:
   metis:
-
 services:
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - metis
-    logging:
-      options:
-        max-size: "50m"
-        max-file: "3"
-  # Define an InfluxDB service
   influxdb:
     image: influxdb:latest
     volumes:
@@ -68,8 +55,10 @@ services:
   python:
     image: python:latest
     build:
-      context: . 
+      context: .
       dockerfile: Dockerfile.python
     networks:
       - metis
+    volumes:
+      - ./scripts/:/scripts/
     restart: always

@@ -1,4 +1,3 @@
-rq
 requests
-redis
 influxdb
+aiohttp[speedups]
