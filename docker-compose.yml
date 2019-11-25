@@ -38,6 +38,18 @@ services:
       - influxdb
     networks:
       - metis
+  # Define a Kapacitor service
+  kapacitor:
+    image: kapacitor:latest
+    environment:
+      KAPACITOR_HOSTNAME: kapacitor
+      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
+    links:
+      - influxdb
+    ports:
+      - "9092:9092"
+    networks:
+      - metis
   # Define a service for using the kapacitor CLI tool.
   # docker-compose run kapacitor-cli
   grafana:

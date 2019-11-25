@@ -26,11 +26,12 @@ def send_to_influx(data):
             "measurement": "http_response",
             "tags": {
                 "domain": data.domain,
-                "status": data.status
+                "status_code": data.status
             },
             #           "time": data["time"] + "000000000",
             "fields": {
                 "response_time": data.response_time,
+                "status": data.status
             }
         }
     ]
