@@ -61,5 +61,4 @@ services:
       - metis
     volumes:
       - ./scripts/:/scripts/
-      - ./check_urls.sh:/etc/cron.d/check_urls.sh
     restart: always

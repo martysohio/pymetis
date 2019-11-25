@@ -9,7 +9,7 @@ from influxdb import InfluxDBClient
 
 INFLUX_CLIENT = InfluxDBClient(
     'influxdb', '8086', 'admin', 'admin', 'http_monitor')
-STORE_FILE = "urls.list"
+STORE_FILE = "/scripts/urls.list"
 
 
 @dataclass

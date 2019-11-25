@@ -17,6 +17,7 @@ ENV LANG C.UTF-8
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		tk-dev \
         mariadb-client \
+				rsyslog \
 		uuid-dev cron supervisor vim \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -133,5 +134,8 @@ RUN set -ex; \
 
 RUN pip install -r /tmp/requirements.txt
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+#RUN crontab -l | { cat; echo "* * * * * root /usr/local/bin/python /scripts/check_urls.py"; } | crontab -
+COPY ./crontab /etc/crontab
+RUN crontab /etc/crontab
 #CMD /usr/sbin/cron -f
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
