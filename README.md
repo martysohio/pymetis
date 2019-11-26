@@ -17,6 +17,8 @@ Status codes are logged with a timeout of 30 seconds.  Unreachable/immediate err
 
 Open Grafana to see a simple premade dashboard at localhost:3000 , user/pass is admin/foobar
 
+![Example board](https://github.com/martysohio/pymetis/blob/master/HTTP_Board.png)
+
 ## Recommendations
 
 Alter to suit. Most of the TICK stack is included, but no alerts are pre-provisioned as everyone will have their own notification channels. I.E. if you like Kapacitor then you can use it , or integrate checks and notifications into the check_urls.py script.  
