@@ -1,6 +1,10 @@
 # pymetis
 
-Python web site monitor using InfluxDB + Grafana dashboards
+Python web site monitor using InfluxDB + Grafana dashboards.  This project is a base to work from to develop your own monitoring dependent on your needs.  
+
+## Requirements
+
+Docker, and you can test locally with the proper Python environment, check the requirement.txt. Requires Python 3.7+
 
 ## How to use
 
@@ -11,4 +15,8 @@ Python web site monitor using InfluxDB + Grafana dashboards
 
 Status codes are logged with a timeout of 30 seconds.  Unreachable/immediate errors have a status code of 0
 
-Open Grafana to see a simple premade dashboard.
+Open Grafana to see a simple premade dashboard at localhost:3000 , user/pass is admin/foobar
+
+## Recommendations
+
+Alter to suit. Most of the TICK stack is included, but no alerts are pre-provisioned as everyone will have their own notification channels. I.E. if you like Kapacitor then you can use it , or integrate checks and notifications into the check_urls.py script.  
